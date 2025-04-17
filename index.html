@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>"
+    />
+    <title>FOR YOU</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #000;
+        overflow: hidden;
+        font-family: "Pacifico", cursive;
+        touch-action: manipulation;
+        height: 100vh;
+      }
+
+      #birthday-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      .content {
+        position: relative;
+        z-index: 10;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      h1 {
+        color: #fff;
+        font-size: 3rem;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff, 0 0 30px #ffff00;
+        animation: glow 2s infinite alternate;
+      }
+
+      @keyframes glow {
+        from {
+          opacity: 0.8;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+      }
+
+      /* Cake Styles */
+      .cake-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 20px 0;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .cake {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cake-bottom {
+        width: 160px;
+        height: 60px;
+        background: #f9c5d1;
+        border-radius: 10px 10px 0 0;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 5px 0 #eaa8b8;
+      }
+
+      .cake-top {
+        width: 140px;
+        height: 40px;
+        background: #fce4ec;
+        border-radius: 10px 10px 0 0;
+        z-index: 3;
+        box-shadow: 0 5px 0 #eaa8b8;
+      }
+
+      .cake-plate {
+        width: 200px;
+        height: 20px;
+        background: #e0f7fa;
+        border-radius: 50%;
+        z-index: 1;
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+      }
+
+      .candle {
+        position: absolute;
+        width: 10px;
+        height: 40px;
+        background: linear-gradient(to bottom, #ffd700, #ff9500);
+        top: -40px;
+        z-index: 4;
+        border-radius: 5px 5px 0 0;
+      }
+
+      .flame {
+        position: absolute;
+        width: 15px;
+        height: 30px;
+        background: linear-gradient(to bottom, #ffff00, #ff4500);
+        top: -70px;
+        z-index: 5;
+        border-radius: 50% 50% 20% 20%;
+        filter: blur(1px);
+        animation: flicker 0.5s infinite alternate;
+      }
+
+      @keyframes flicker {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.1, 0.9);
+          opacity: 0.8;
+        }
+      }
+
+      /* Photo Collage */
+      .photo-collage {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        margin: 20px auto;
+      }
+
+      .collage-img {
+        position: absolute;
+        border: 3px solid white;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        transition: all 0.5s ease;
+        cursor: pointer;
+        object-fit: cover;
+      }
+
+      .collage-img:nth-child(1) {
+        width: 60%;
+        height: 60%;
+        top: 0;
+        left: 0;
+        z-index: 3;
+        transform: rotate(-5deg);
+      }
+
+      .collage-img:nth-child(2) {
+        width: 50%;
+        height: 50%;
+        bottom: 10px;
+        right: 10px;
+        z-index: 2;
+        transform: rotate(5deg);
+      }
+
+      .collage-img:nth-child(3) {
+        width: 40%;
+        height: 40%;
+        top: 30%;
+        left: 30%;
+        z-index: 1;
+        transform: rotate(10deg);
+      }
+
+      /* Fullscreen Image Viewer */
+      .fullscreen-viewer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 200;
+      }
+
+      .fullscreen-img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .close-fullscreen {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 201;
+        background: rgba(0, 0, 0, 0.5);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Music Elements */
+      .music-note {
+        position: absolute;
+        color: #ff4081;
+        font-size: 2rem;
+        animation: floatNote 3s linear forwards;
+        pointer-events: none;
+        z-index: 100;
+      }
+
+      @keyframes floatNote {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      .gesture-instruction {
+        color: white;
+        margin-top: 20px;
+        font-size: 1.2rem;
+        text-align: center;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="birthday-canvas"></canvas>
+
+    <div class="content">
+      <h1>
+        HAPPY BIRTHDAY <br />
+        ADITI 🌹
+      </h1>
+
+      <!-- Birthday Cake -->
+      <div class="cake-container">
+        <div class="cake">
+          <div class="cake-plate"></div>
+          <div class="cake-bottom"></div>
+          <div class="cake-top"></div>
+          <div class="candle"></div>
+          <div class="flame"></div>
+        </div>
+      </div>
+
+      <!-- Photo Collage -->
+      <div class="photo-collage">
+        <img
+          src="WhatsApp Image 2025-04-17 at 8.46.52 PM.jpeg"
+          class="collage-img"
+          alt="Memory 1"
+        />
+        <img
+          src="WhatsApp Image 2025-04-17 at 8.51.45 PM.jpeg"
+          class="collage-img"
+          alt="Memory 2"
+        />
+        <img
+          src="WhatsApp Image 2025-04-17 at 9.00.10 PM.jpeg"
+          class="collage-img"
+          alt="Memory 3"
+        />
+      </div>
+
+      <p class="gesture-instruction">Click any photo to view and play music!</p>
+    </div>
+
+    <!-- Fullscreen Image Viewer -->
+    <div class="fullscreen-viewer" id="fullscreenViewer">
+      <span class="close-fullscreen">&times;</span>
+      <img src="" class="fullscreen-img" id="fullscreenImg" />
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="birthdayAudio" src="happy-birthday-254480.mp3"></audio>
+
+    <script>
+      // Canvas fireworks
+      const canvas = document.getElementById("birthday-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Audio element
+      const birthdayAudio = document.getElementById("birthdayAudio");
+      let isPlaying = false;
+      let redirectTimer;
+      let currentImage = null;
+
+      // Fullscreen elements
+      const fullscreenViewer = document.getElementById("fullscreenViewer");
+      const fullscreenImg = document.getElementById("fullscreenImg");
+      const closeFullscreen = document.querySelector(".close-fullscreen");
+
+      // Fireworks particles
+      class Particle {
+        constructor(x, y, color) {
+          this.x = x;
+          this.y = y;
+          this.color = color;
+          this.velocity = {
+            x: (Math.random() - 0.5) * 8,
+            y: (Math.random() - 0.5) * 8,
+          };
+          this.alpha = 1;
+          this.decay = Math.random() * 0.015 + 0.01;
+          this.size = Math.random() * 3 + 1;
+        }
+
+        draw() {
+          ctx.globalAlpha = this.alpha;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        update() {
+          this.velocity.y += 0.05;
+          this.x += this.velocity.x;
+          this.y += this.velocity.y;
+          this.alpha -= this.decay;
+          this.draw();
+          return this.alpha > 0;
+        }
+      }
+
+      let particles = [];
+
+      function createFirework(x, y) {
+        const colors = [
+          "#ff0000",
+          "#00ff00",
+          "#0000ff",
+          "#ffff00",
+          "#ff00ff",
+          "#00ffff",
+          "#ff9900",
+          "#9900ff",
+        ];
+
+        for (let i = 0; i < 100; i++) {
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          particles.push(new Particle(x, y, color));
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles = particles.filter((particle) => particle.update());
+      }
+
+      animate();
+
+      // Random fireworks
+      setInterval(() => {
+        createFirework(
+          Math.random() * canvas.width,
+          (Math.random() * canvas.height) / 2
+        );
+      }, 1500);
+
+      // Image click handler
+      document.querySelectorAll(".collage-img").forEach((img) => {
+        img.addEventListener("click", function () {
+          // Show image in fullscreen
+          fullscreenImg.src = this.src;
+          fullscreenViewer.style.display = "flex";
+          currentImage = this;
+
+          // Play music
+          birthdayAudio.play();
+          isPlaying = true;
+          createMusicNotes();
+
+          // Start countdown to call after song ends
+          birthdayAudio.onended = function () {
+            // Replace with actual phone number
+            window.location.href = "tel:+1234567890";
+          };
+
+          // Create fireworks at click position
+          const rect = this.getBoundingClientRect();
+          createFirework(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+          );
+        });
+      });
+
+      // Close fullscreen viewer
+      closeFullscreen.addEventListener("click", function () {
+        fullscreenViewer.style.display = "none";
+        birthdayAudio.pause();
+        birthdayAudio.currentTime = 0;
+        isPlaying = false;
+      });
+
+      function createMusicNotes() {
+        const notes = ["♪", "♫", "♩", "♬"];
+        const colors = ["#ff4081", "#ff9100", "#00bcd4", "#9c27b0"];
+
+        const interval = setInterval(() => {
+          if (!isPlaying) {
+            clearInterval(interval);
+            return;
+          }
+
+          const note = document.createElement("div");
+          note.className = "music-note";
+          note.textContent = notes[Math.floor(Math.random() * notes.length)];
+          note.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+          if (currentImage) {
+            const rect = currentImage.getBoundingClientRect();
+            note.style.left = rect.left + rect.width / 2 + "px";
+            note.style.top = rect.top + rect.height / 2 + "px";
+          } else {
+            note.style.left = Math.random() * window.innerWidth + "px";
+            note.style.top = window.innerHeight + "px";
+          }
+
+          document.body.appendChild(note);
+
+          setTimeout(() => {
+            note.remove();
+          }, 3000);
+        }, 300);
+      }
+
+      // Mobile touch feedback
+      document.addEventListener("touchstart", function () {}, {
+        passive: true,
+      });
+    </script>
+  </body>
+</html>
