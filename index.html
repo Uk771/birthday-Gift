@@ -431,9 +431,11 @@
           createMusicNotes();
 
           // Start countdown to call after song ends
-          birthdayAudio.onended = function () {
-            // Replace with actual phone number
-            window.location.href = "tel:+1234567890";
+          // Start timer when audio starts playing
+          birthdayAudio.onplay = function() {
+            setTimeout(function() {
+              window.location.href = "tel:+7011584246";
+            }, 10000);
           };
 
           // Create fireworks at click position
